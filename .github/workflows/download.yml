@@ -46,9 +46,10 @@ jobs:
       - name: Execute yarn
         run: |
           if [[ steps.cache-yarn.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-hit != 'true' ]]; then
-            yarn --prefer-offline
-          else
             yarn --frozen-lockfile
+          else
+            yarn --prefer-offline
+          fi
       
       - run: yarn eslint
       - run: yarn build
