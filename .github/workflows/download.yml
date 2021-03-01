@@ -37,8 +37,14 @@ jobs:
       - uses: microsoft/playwright-github-action@v1
       - run: yarn test:ci
       
+      - name: Install 7zip
+        run: |
+          sudo add-apt-repository universe
+          sudo apt update
+          sudo apt install p7zip-full p7zip-rar
+      
       - name: Archive All
-        run: 7z.exe a -tzip d:/github1s.7z -mx3 ./
+        run: 7z a d:/github1s.7z -mx3 ./
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
