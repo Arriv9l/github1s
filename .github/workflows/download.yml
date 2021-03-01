@@ -26,6 +26,7 @@ jobs:
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
       - name: Cache yarn cache
+        id: cache-yarn
         uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -42,7 +43,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
       
-      - run: yarn --frozen-lockfile
+      - name: Execute yarn
+        run: |
+          if [[ steps.cache-yarn.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-hit != 'true' ]]; then
+            yarn --prefer-offline
+          else
+            yarn --frozen-lockfile
+      
       - run: yarn eslint
       - run: yarn build
       - uses: microsoft/playwright-github-action@v1
@@ -55,10 +62,10 @@ jobs:
           sudo apt install p7zip-full p7zip-rar
       
       - name: Archive All
-        run: 7z a /home/github1s.7z -mx3 ./
+        run: 7z a $GITHUB_WORKSPACE/github1s.7z -mx3 ./
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
           name: github1s
-          path: /home/github1s.7z
+          path: $GITHUB_WORKSPACE/github1s.7z
