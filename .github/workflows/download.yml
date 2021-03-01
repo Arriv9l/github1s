@@ -55,10 +55,10 @@ jobs:
           sudo apt install p7zip-full p7zip-rar
       
       - name: Archive All
-        run: 7z a ../github1s.7z -mx3 ./
+        run: 7z a /home/github1s.7z -mx3 ./
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
           name: github1s
-          path: ../github1s.7z
+          path: /home/github1s.7z
