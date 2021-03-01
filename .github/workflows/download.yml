@@ -33,23 +33,9 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.node-version }}-yarn-
-            
-      - name: Cache node_modules
-        id: cache-node-modules
-        uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
       
       - name: Execute yarn
-        run: |
-          if [[ steps.cache-yarn.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-hit != 'true' ]]; then
-            yarn --frozen-lockfile
-          else
-            yarn --prefer-offline
-          fi
+        run: yarn --prefer-offline --frozen-lockfile
       
       - run: yarn eslint
       - run: yarn build
