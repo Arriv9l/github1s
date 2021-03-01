@@ -25,12 +25,23 @@ jobs:
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - uses: actions/cache@v2
+      - name: Cache yarn cache
+        uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-${{ matrix.node-version }}
+          key: ${{ runner.os }}-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-${{ matrix.node-version }}
+            ${{ runner.os }}-${{ matrix.node-version }}-yarn-
+            
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
+      
       - run: yarn --frozen-lockfile
       - run: yarn eslint
       - run: yarn build
@@ -44,10 +55,10 @@ jobs:
           sudo apt install p7zip-full p7zip-rar
       
       - name: Archive All
-        run: 7z a d:/github1s.7z -mx3 ./
+        run: 7z a ../github1s.7z -mx3 ./
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
           name: github1s
-          path: D:/github1s.7z
+          path: ../github1s.7z
